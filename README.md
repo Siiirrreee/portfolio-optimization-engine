@@ -1,9 +1,5 @@
 # Quantitative Portfolio Optimization Engine
 
-[![Run analysis](https://github.com/Siiirrreee/portfolio-optimization-engine/actions/workflows/run-analysis.yml/badge.svg)](https://github.com/Siiirrreee/portfolio-optimization-engine/actions/workflows/run-analysis.yml)
-
-_Results and charts refresh automatically each month with the latest market data via GitHub Actions._
-
 A Python engine that builds and stress-tests stock/ETF portfolios with **Modern Portfolio Theory**, then checks whether the "optimal" portfolio still holds up in a **walk-forward, out-of-sample backtest after transaction costs**.
 
 > **Question:** Does mean-variance optimization beat a simple equal-weight portfolio and the S&P 500 once you remove hindsight and pay trading costs?
