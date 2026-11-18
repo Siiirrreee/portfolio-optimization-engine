@@ -130,8 +130,10 @@ def main() -> None:
         f"- Max Sharpe (full period) concentrates in {', '.join(f'{t} {pct(w)}' for t, w in top_ms.items())}.",
         "- Sharpe, in-sample → out-of-sample: "
         + ", ".join(f"{s} {ins_sh[s]:.2f} → {oos_sh[s]:.2f}" for s in weights.columns)
-        + ". A big fall for Max Sharpe signals the optimizer fit noise in past returns "
-        "(note: the backtest starts after the first lookback window, so periods differ slightly).",
+        + (". Max Sharpe lost much of its edge out-of-sample, a sign the optimizer fit noise in past returns."
+           if ins_sh["Max Sharpe"] - oos_sh["Max Sharpe"] > 0.25 else
+           ". Max Sharpe held up out-of-sample, so its edge was not just hindsight.")
+        + " (The backtest starts after the first lookback window, so the periods differ slightly.)",
     ]
     (out_results / "summary.md").write_text("\n".join(lines) + "\n")
 
