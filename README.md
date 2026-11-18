@@ -20,7 +20,21 @@ A Python engine that builds and stress-tests stock/ETF portfolios with **Modern 
 ## Results
 
 <!-- RESULTS:START -->
-_Run `python main.py` to fill this section automatically._
+_Out-of-sample walk-forward backtest, after 10 bps costs, Jan 2019 to Nov 2026. Full detail: [results/summary.md](results/summary.md)._
+
+|                 | Annual Return   | Annual Volatility   |   Sharpe | Max Drawdown   |   Beta |
+|:----------------|:----------------|:--------------------|---------:|:---------------|-------:|
+| Equal Weight    | 18.5%           | 14.9%               |     0.94 | -26.2%         |   0.73 |
+| Min Variance    | 10.0%           | 10.0%               |     0.6  | -19.9%         |   0.31 |
+| Max Sharpe      | 18.5%           | 14.5%               |     0.97 | -16.9%         |   0.54 |
+| Benchmark (SPY) | 16.7%           | 19.2%               |     0.69 | -33.7%         |   1    |
+
+**Key findings**
+
+- Best out-of-sample Sharpe: **Max Sharpe** (0.97).
+- Shallowest max drawdown: **Max Sharpe** (-16.9%).
+- Max Sharpe (full period) concentrates in GLD 30.0%, AAPL 27.5%, MSFT 15.9%.
+- Sharpe, in-sample → out-of-sample: Equal Weight 0.77 → 0.94, Min Variance 0.56 → 0.60, Max Sharpe 1.00 → 0.97. Max Sharpe held up out-of-sample, so its edge was not just hindsight. (The backtest starts after the first lookback window, so the periods differ slightly.)
 <!-- RESULTS:END -->
 
 ![Backtest](visuals/cumulative_returns_drawdown.png)
