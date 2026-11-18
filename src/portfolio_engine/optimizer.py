@@ -24,12 +24,25 @@ def _solve(objective, n: int, max_weight: float, extra_constraints=()) -> np.nda
     if max_weight * n < 1 - 1e-9:
         raise ValueError(f"max_weight={max_weight} is infeasible for {n} assets (need max_weight >= {1/n:.3f}).")
     constraints = [{"type": "eq", "fun": lambda w: w.sum() - 1}, *extra_constraints]
-    res = minimize(objective, np.full(n, 1 / n), method="SLSQP",
-                   bounds=[(0.0, max_weight)] * n, constraints=constraints,
-                   options={"maxiter": 1000, "ftol": 1e-12})
-    if not res.success:
-        raise RuntimeError(f"Optimization failed: {res.message}")
-    w = np.clip(res.x, 0, None)
+    bounds = [(0.0, max_weight)] * n
+
+    def feasible(x: np.ndarray) -> bool:
+        return (abs(x.sum() - 1) < 1e-6 and (x >= -1e-8).all() and (x <= max_weight + 1e-8).all()
+                and all(abs(c["fun"](x)) < 1e-6 for c in extra_constraints))
+
+    # Several starting points: SLSQP can stop early ("positive directional derivative") on
+    # flat or badly scaled problems. Keep the best feasible answer across starts.
+    starts = [np.full(n, 1 / n), *np.random.default_rng(0).dirichlet(np.ones(n), 4)]
+    best, last_msg = None, ""
+    for x0 in starts:
+        res = minimize(objective, x0, method="SLSQP", bounds=bounds, constraints=constraints,
+                       options={"maxiter": 1000, "ftol": 1e-10})
+        last_msg = res.message
+        if (res.success or feasible(res.x)) and (best is None or res.fun < best.fun):
+            best = res
+    if best is None:
+        raise RuntimeError(f"Optimization failed: {last_msg}")
+    w = np.clip(best.x, 0, None)
     return w / w.sum()
 
 
